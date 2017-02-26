@@ -29,7 +29,7 @@ Description of the game mechanics
 -	Sprites that change depending on a movement direction.
 -	Can move Up, Down, Left, Right.
 -	Same line of sight.
--	Health. Player has heath points (HP) that can be reduced by enemies or increased by potion. 
+-	Health. Player has health points (HP) that can be reduced by enemies or increased by potion. 
 -	Movement speed. Player has a certain movement speed, which could be changed with potion for a certain time.
 -	Player can use equipment with his needs.
 -	Player can interact through the interaction key with: treasure chests, levers, enemies, doors.
