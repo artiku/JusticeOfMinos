@@ -68,6 +68,8 @@ Score is the maze escape time.
 -	Create Achievement system.
 
 Screen views
+------------
+
 **Main menu**
 
 Buttons: “New game”, “High scores” (Local; Global (on the webpage)), “Options”, “How to play”.
