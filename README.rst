@@ -8,45 +8,46 @@ Description of the game mechanics
 
 **Map**
 
--	Top-down perspective
--	Pre-generated map (Will try to implement Random seed level generation)
--	Divided into cells
+-	Top-down perspective.
+-	Pre-generated map (Will try to implement Random seed level generation).
+-	Divided into cells.
 
 **NPC and Hero in general**
 
 -	Sprites that change depending on a movement direction.
 -	Can move Up, Down, Left, Right.
--	NPSs have limited line of sight: they can see only a restricted part of labyrinth. It depends on:
-    -	if there is an obstacle, NPSs cannot see what is located behind it
-    -	if there is an open space around, NPSs can see only part of it (limited by radius)
--	NPSs can move by their own way (randomly wandering). 
+-	NPSs have limited line of sight: they can see only a restricted part of the labyrinth. It depends on:
+    -	if there is an obstacle, NPSs cannot see what is located behind it.
+    -	if there is an open space around, NPSs can see only part of it (limited by radius).
+-	NPSs can move by their own way (randomly wandering, if the NPS does not see a pleyer). 
 -	NPSs have defined movement speed.
 -	NPS cannot fight with NPS. 
 -	NPSs can attack player (Minotaur kills instantly).
--	NPSs have amount of health (except the Minotaur)
+-	NPSs have amount of health (except the Minotaur).
 **Hero**
 
 -	Sprites that change depending on a movement direction.
 -	Can move Up, Down, Left, Right.
--	Same line of sight.
+-	Line of sight is similar to NPS's line of sight.
 -	Health. Player has health points (HP) that can be reduced by enemies or increased by potion. 
 -	Movement speed. Player has a certain movement speed, which could be changed with potion for a certain time.
--	Player can use equipment with his needs.
--	Player can interact through the interaction key with: treasure chests, levers, enemies, doors.
+-	Player can use equipment with his needs (whenever a pleyer wants).
+-	Player can interact through the interaction key with (for instance, by pressing "f" button) : treasure chests, levers, enemies, doors.
 
 **Equipment**
 
--	Treasure chests 
+-	Treasure chests:
     To open the chest, player have to come close to one cell and press the “interaction key”;
 Every of four (or more) chests contain treasure(s): 
 
--	Shield – a guaranteed protection from the enemies (and may be the dragon). 
--	Health potion – regenerate all HP
--	Sword – gives an ability to fight with enemies 
--	Torch – increases player’s range of view by some radius, can be placed on the wall if there is a stand, in order to lighten area in the distance.
+-	Shield – a guaranteed protection from the enemies (and perhaps from the dragon). 
+-	Health potion – regenerate all HP.
+-	Sword – gives an ability to fight with enemies.
+-	Torch – increases player’s range of view by some radius, can be placed on the wall if there is a stand, in order to lighten area in the distance. 
+Also, player can carry the torch. In this case, the torch has the same effect. 
 
--	Keys
-    To open the door (main goal), player have to find the keys that are found in the labyrinth. They can be found in the special chests. 
+-	Keys.
+    To open the door (main goal), player have to find the keys that are located in the labyrinth. They can be found in the special chests. 
 
 **Interaction with interior**
 
