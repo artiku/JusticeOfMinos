@@ -19,7 +19,7 @@ Description of the game mechanics
 -	NPSs have limited line of sight: they can see only a restricted part of the labyrinth. It depends on:
     -	if there is an obstacle, NPSs cannot see what is located behind it.
     -	if there is an open space around, NPSs can see only part of it (limited by radius).
--	NPSs can move by their own way (randomly wandering, if the NPS does not see a pleyer). 
+-	NPSs can move by their own way (randomly wandering, if the NPS does not see a player). 
 -	NPSs have defined movement speed.
 -	NPS cannot fight with NPS. 
 -	NPSs can attack player (Minotaur kills instantly).
@@ -32,7 +32,7 @@ Description of the game mechanics
 -	Health. Player has health points (HP) that can be reduced by enemies or increased by potion. 
 -	Movement speed. Player has a certain movement speed, which could be changed with potion for a certain time.
 -	Player can use equipment with his needs (whenever a pleyer wants).
--	Player can interact through the interaction key with (for instance, by pressing "f" button) : treasure chests, levers, enemies, doors.
+-	Player can interact through the interaction key with (by default the "f" button) : treasure chests, levers, enemies, doors.
 
 **Equipment**
 
