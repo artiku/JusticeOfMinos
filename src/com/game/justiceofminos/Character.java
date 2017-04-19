@@ -18,7 +18,7 @@ public class Character extends Pane {
     /**
      * Hero size
      */
-    private static final int HERO_SIZE = 32;
+    private static final int HERO_SIZE = JusticeofMinos.BLOCK_SIZE;
 
 
     /**
@@ -101,7 +101,7 @@ public class Character extends Pane {
      * @param value Value to move.
      */
     void moveX(int value) {
-        final int offsetToCenter = 8;
+        final int offsetToCenter = HERO_SIZE / 4;
 
         boolean movingRight = value > 0;
         for (int i = 0; i < Math.abs(value); i++) {
@@ -141,7 +141,7 @@ public class Character extends Pane {
      * @param value Value to move.
      */
     void moveY(int value) {
-        final int offsetToCenter = 8;
+        final int offsetToCenter = HERO_SIZE / 4;
 
         boolean movingDown = value > 0;
         for (int i = 0; i < Math.abs(value); i++) {

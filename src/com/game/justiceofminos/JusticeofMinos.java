@@ -31,7 +31,7 @@ public class JusticeofMinos extends Application {
     /**
      * Standard size of every block(sprite) exist in the game.
      */
-    static final short BLOCK_SIZE = 32;
+    static final short BLOCK_SIZE = 90;
 
     /**
      * Initial player movement speed.
