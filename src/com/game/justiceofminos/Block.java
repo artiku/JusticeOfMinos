@@ -13,17 +13,31 @@ public class Block extends Pane{
     /**
      * Blocks spritesheet.
      */
-    Image blocksImage = new Image(getClass().getResource("WorldSprites.png").toExternalForm());
+    private Image blocksImage = new Image(Assets.WORLD_SPRITES);
 
     /**
      * Block Image View.
      */
-    ImageView block;
+    private ImageView block;
+
+    /**
+     * Size in the file.
+     */
+    private static final int FILE_SIZE = 32;
 
     public enum BlockType {
+        /**
+         * Type of blocks.
+         */
         WALL, FLOOR, GATE, CHEST
     }
 
+    /**
+     * Coonstructor.
+     * @param blockType Type of the block from the enum.
+     * @param x x coord
+     * @param y y coord
+     */
     public Block(BlockType blockType, int x, int y) {
         block = new ImageView(blocksImage);
         block.setFitWidth(JusticeofMinos.BLOCK_SIZE);
@@ -33,17 +47,21 @@ public class Block extends Pane{
 
         switch (blockType) {
             case WALL:
-                block.setViewport(new Rectangle2D(64,64,32,32));
+                block.setViewport(new Rectangle2D(FILE_SIZE * 2,
+                        FILE_SIZE, FILE_SIZE, FILE_SIZE));
                 JusticeofMinos.wallStreet.add(this);
                 break;
             case FLOOR:
-                block.setViewport(new Rectangle2D(64, 0, 32, 32));
+                block.setViewport(new Rectangle2D(FILE_SIZE * 2,
+                        0, FILE_SIZE, FILE_SIZE));
                 break;
             case GATE:
-                block.setViewport(new Rectangle2D(64, 64, 32, 32));
+                block.setViewport(new Rectangle2D(FILE_SIZE * 2,
+                        FILE_SIZE * 2, FILE_SIZE, FILE_SIZE));
                 break;
             case CHEST:
-                block.setViewport(new Rectangle2D(0, 0, 32, 32));
+                block.setViewport(new Rectangle2D(0, 0,
+                        FILE_SIZE, FILE_SIZE));
                 break;
         }
         getChildren().add(block);

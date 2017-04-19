@@ -64,7 +64,6 @@ public class SpriteAnimation extends Transition {
      * @param columns Columns for the frames in one row in the image file.
      * @param offsetX X offset where image left upper corner starts.
      * @param offsetY Y offset
-//     * @param size One sprite frame size(square).
      * @param height Height.
      * @param width Width.
      */

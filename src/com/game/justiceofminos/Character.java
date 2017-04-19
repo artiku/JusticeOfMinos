@@ -6,6 +6,8 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 /**
@@ -14,9 +16,20 @@ import javafx.util.Duration;
 public class Character extends Pane {
 
     /**
+     * Hero size
+     */
+    private static final int HERO_SIZE = 32;
+
+
+    /**
+     * Hero size
+     */
+    private static final int COLLISION_BORDER = 20;
+
+    /**
      * Image of the player.
      */
-    Image heroImage = new Image(getClass().getClassLoader().getResource("Knight.png").toExternalForm());
+    Image heroImage = new Image(Assets.HERO_SPRITE);
 
     /**
      * Hero image view.
@@ -72,8 +85,10 @@ public class Character extends Pane {
      * Constructor.
      */
     Character() {
-        heroView.setFitHeight(32);
-        heroView.setFitWidth(32);
+//        setWidth(20);
+//        setHeight(20);
+        heroView.setFitHeight(HERO_SIZE);
+        heroView.setFitWidth(HERO_SIZE);
         heroView.setViewport(new Rectangle2D(offsetX, offsetY, width, height));
         //TODO More animations. May be inner animation class, to call animation like: animation.right
 //        animation = new SpriteAnimation(this.heroView, animDuration, count, columns, offsetX, offsetY, width, height);
@@ -86,19 +101,29 @@ public class Character extends Pane {
      * @param value Value to move.
      */
     void moveX(int value) {
+        final int offsetToCenter = 8;
+
         boolean movingRight = value > 0;
         for (int i = 0; i < Math.abs(value); i++) {
             for (Node wall : JusticeofMinos.wallStreet) {
-                if (this.getBoundsInParent().intersects(wall.getBoundsInParent())) {
+
+                Rectangle2D rect = new Rectangle2D(this.getTranslateX() + offsetToCenter,
+                        this.getTranslateY() + offsetToCenter * 2,
+                        offsetToCenter * 2 + 2, offsetToCenter * 2);
+
+                if (rect
+                        .intersects(wall.getTranslateX(), wall.getTranslateY(),
+                        JusticeofMinos.BLOCK_SIZE, JusticeofMinos.BLOCK_SIZE)) {
+
                     if (movingRight) {
-                        if (this.getTranslateX() + JusticeofMinos.BLOCK_SIZE == wall.getTranslateX()) {
+                        if (rect.getMinX() + offsetToCenter * 2 == wall.getTranslateX()) {
                             this.setTranslateX(this.getTranslateX() - 1);
                             //TODO DEBUGGING
                             System.out.println("COLLIDES AT RIGHT");
                             return;
                         }
                     } else {
-                        if (this.getTranslateX() == JusticeofMinos.BLOCK_SIZE + wall.getTranslateX()) {
+                        if (rect.getMinX() +1 == wall.getTranslateX() + JusticeofMinos.BLOCK_SIZE ) {
                             this.setTranslateX(this.getTranslateX() + 1);
                             //TODO DEBUGGING
                             System.out.println("COLLIDES AT LEFT");
@@ -116,19 +141,26 @@ public class Character extends Pane {
      * @param value Value to move.
      */
     void moveY(int value) {
+        final int offsetToCenter = 8;
+
         boolean movingDown = value > 0;
         for (int i = 0; i < Math.abs(value); i++) {
             for (Node wall : JusticeofMinos.wallStreet) {
-                if (this.getBoundsInParent().intersects(wall.getBoundsInParent())) {
+
+                Rectangle2D rect = new Rectangle2D(this.getTranslateX() + offsetToCenter,
+                        this.getTranslateY() + offsetToCenter * 2 -2,
+                        offsetToCenter * 2, offsetToCenter * 2 + 2);
+                if (rect.intersects(wall.getTranslateX(), wall.getTranslateY(),
+                        JusticeofMinos.BLOCK_SIZE, JusticeofMinos.BLOCK_SIZE)) {
                     if (movingDown) {
-                        if (this.getTranslateY() + JusticeofMinos.BLOCK_SIZE == wall.getTranslateY()) {
+                        if (rect.getMinY() + 1 + offsetToCenter * 2 == wall.getTranslateY()) {
                             this.setTranslateY(this.getTranslateY() - 1);
                             //TODO DEBUGGING
                             System.out.println("COLLIDES AT BOTTOM");
                             return;
                         }
                     } else {
-                        if (this.getTranslateY() == JusticeofMinos.BLOCK_SIZE + wall.getTranslateY()) {
+                        if (rect.getMinY() +1 == JusticeofMinos.BLOCK_SIZE + wall.getTranslateY()) {
                             this.setTranslateY(this.getTranslateY() + 1);
                             //TODO DEBUGGING
                             System.out.println("COLLIDES AT TOP");

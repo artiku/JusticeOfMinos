@@ -1,12 +1,30 @@
 package com.game.justiceofminos;
 
+import javafx.geometry.Rectangle2D;
+
 /**
  * Created by Anna on 19.04.2017.
  */
 public class Assets {
+
     /**
-     * Created by HP on 19.04.2017.
+     * Blocks sprite sheet.
      */
-        static String WALL = Assets.class.getResource("testSize.png").toExternalForm();
-        static String FLOOR = Assets.class.getResource("floorTest.png").toExternalForm();
+    static final String WORLD_SPRITES = "file:assets/WorldSprites.png";
+
+    /**
+     * Hero(player) sprites.
+     */
+    static final String HERO_SPRITE = "file:assets/Knight.png";
+
+//    /**
+//     * Wall image path.
+//     */
+//    static final Rectangle2D WALL_VIEWPORT = new Rectangle2D(JusticeofMinos.BLOCK_SIZE * 2,
+//            0, JusticeofMinos.BLOCK_SIZE, JusticeofMinos.BLOCK_SIZE);
+
+    /**
+     * Floor path.
+     */
+    static final String FLOOR = Assets.class.getResource("/iti0011_gui/assets/floorTest.png").toExternalForm();
 }

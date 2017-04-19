@@ -21,32 +21,32 @@ public class JusticeofMinos extends Application {
     /**
      * Standard screen width.
      */
-    private final static int SCREEN_WIDTH = 1280;
+    private static final int SCREEN_WIDTH = 1280;
 
     /**
      * Standard screen height.
      */
-    private final static int SCREEN_HEIGHT = 960;
+    private static final int SCREEN_HEIGHT = 960;
 
     /**
      * Standard size of every block(sprite) exist in the game.
      */
-    final static short BLOCK_SIZE = 32;
+    static final short BLOCK_SIZE = 32;
 
     /**
      * Initial player movement speed.
      */
-    private static int INITIAL_MOVEMENT_SPEED = 5;
+    private static final int MOVEMENT_SPEED = 5;
 
     /**
      * Spawn cell X coordinate for the Hero Character.
      */
-    private final static int HERO_SPAWN_X = 11 * BLOCK_SIZE;
+    private static final int HERO_SPAWN_X = 11 * BLOCK_SIZE;
 
     /**
      * Spawn cell Y coordinate for the Hero Character.
      */
-    private final static int HERO_SPAWN_Y = 5 * BLOCK_SIZE;
+    private static final int HERO_SPAWN_Y = 5 * BLOCK_SIZE;
 
     /**
      * Keep values of every key pressed.
@@ -66,7 +66,7 @@ public class JusticeofMinos extends Application {
     /**
      * Player movement speed.
      */
-    private int playerMovementSpeed = INITIAL_MOVEMENT_SPEED;
+    private int playerMovementSpeed = MOVEMENT_SPEED;
 
     /**
      * Primary Application Pane.
@@ -98,6 +98,10 @@ public class JusticeofMinos extends Application {
      */
     private int levelWidth;
 
+    /**
+     * Level height.
+     */
+    private int levelHeight;
 
 
 
@@ -108,7 +112,7 @@ public class JusticeofMinos extends Application {
      * @throws Exception Exception.
      */
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         initGameWorld();
 //
 //        /* Setting Main Group(Pane) */
@@ -173,6 +177,10 @@ public class JusticeofMinos extends Application {
             }
         });
     }
+
+    /**
+     * Update method.
+     */
     private void update() {
 
 //        currentAnim.pause();
@@ -190,7 +198,7 @@ public class JusticeofMinos extends Application {
 //            currentAnim = moveLeft;
             currentAnim.play();
         } else if (keyInput.contains(KeyCode.UP)) {
-            player.moveY(playerMovementSpeed);
+            player.moveY(-playerMovementSpeed);
             player.animation.up.play();
 
 //            currentAnim = moveUp;
@@ -209,7 +217,8 @@ public class JusticeofMinos extends Application {
      */
     private void initGameWorld() {
         /* WILL IT WORK??? */
-        levelWidth = Level.REGULAR_LEVEL_DATA.length * BLOCK_SIZE;
+        levelWidth = Level.REGULAR_LEVEL_DATA[0].length() * BLOCK_SIZE;
+        levelHeight = Level.REGULAR_LEVEL_DATA.length * BLOCK_SIZE;
         for (int y = 0; y < Level.REGULAR_LEVEL_DATA.length; y++) {
             String line = Level.REGULAR_LEVEL_DATA[y];
             for (int x = 0; x < line.length(); x++) {
@@ -234,13 +243,21 @@ public class JusticeofMinos extends Application {
         }
 
         player = new Character();
-        player.setTranslateX(50);
-        player.setTranslateY(50);
+        player.setTranslateX(SCREEN_WIDTH / 2);
+        player.setTranslateY(SCREEN_HEIGHT / 2);
         player.translateXProperty().addListener((ons, old, newValue) -> {
             int offset = newValue.intValue();
 
-            if (offset > 640 && offset < levelWidth - 640) {
-                root.setLayoutX(-(offset - 640));
+            if (offset > 200 && offset < levelWidth - 200) {
+                root.setLayoutX(-(offset - SCREEN_WIDTH / 2));
+                // Here we can move background as well: background.<<same>>
+            }
+        });
+        player.translateYProperty().addListener((ons, old, newValue) -> {
+            int offset = newValue.intValue();
+
+            if (offset > 200 && offset < levelHeight - 200) {
+                root.setLayoutY(-(offset - SCREEN_HEIGHT / 2));
                 // Here we can move background as well: background.<<same>>
             }
         });
@@ -270,7 +287,8 @@ public class JusticeofMinos extends Application {
 //                wall.addToGroup(boardGroup);
 //            } else if (c == ' ') {
 //                Sprite floor = new Floor(x * SPRITESIZE, y * SPRITESIZE);
-//                spriteWorldMapCoordsHashMap.put( (int) floor.getWorldMapPositionX() + ":" + (int) floor.getWorldMapPositionY(), floor);
+//                spriteWorldMapCoordsHashMap.put( (int) floor.getWorldMapPositionX() + ":" +
+// (int) floor.getWorldMapPositionY(), floor);
 //                floor.addToGroup(boardGroup);
 //            } else if (c == '\n') {
 //                y++;
@@ -308,11 +326,14 @@ public class JusticeofMinos extends Application {
 //        int y = 0;
 //
 //        // Map draw only (By integer coordinates)
-//        for (int spriteToDrawY = startSpriteToDrawY; spriteToDrawY <= SCREEN_HEIGHT + startDrawPosOnCameraViewY; spriteToDrawY += SPRITESIZE) {
+//        for (int spriteToDrawY = startSpriteToDrawY; spriteToDrawY <= SCREEN_HEIGHT +
+// startDrawPosOnCameraViewY; spriteToDrawY += SPRITESIZE) {
 //
-//            for (int spriteToDrawX = startSpriteToDrawX; spriteToDrawX <= SCREEN_WIDTH + startDrawPosOnCameraViewX; spriteToDrawX += SPRITESIZE) {
+//            for (int spriteToDrawX = startSpriteToDrawX; spriteToDrawX <= SCREEN_WIDTH +
+// startDrawPosOnCameraViewX; spriteToDrawX += SPRITESIZE) {
 //
-//                // TODO Is there any other way to keep coordinates together? Anything faster than string? Like tuple at Python.
+//                // TODO Is there any other way to keep coordinates together? Anything
+// faster than string? Like tuple at Python.
 //                Sprite sprite = spriteWorldMapCoordsHashMap.get( spriteToDrawX + ":" + spriteToDrawY);
 //                if (sprite != null) {
 //                    int cameraDrawX = SPRITESIZE * x - startDrawPosOnCameraViewX % SPRITESIZE;
@@ -351,7 +372,8 @@ public class JusticeofMinos extends Application {
 //            int widthColBox =  hero.getCollisionBoxWidth();
 //            int heightColBox =  hero.getCollisionBoxHeight();
 //                    /* We create predictable Collision Box and if it collide, next position wont be updated. */
-//            if (new Rectangle(xColBox, yColBox, widthColBox, heightColBox).intersects(wall.getColBox().getBoundsInLocal())) {
+//            if (new Rectangle(xColBox, yColBox, widthColBox, heightColBox)
+// .intersects(wall.getColBox().getBoundsInLocal())) {
 //                return false;
 //            }
 //        }
@@ -412,6 +434,10 @@ public class JusticeofMinos extends Application {
 //        timeline.play();
 //    }
 
+    /**
+     * Main.
+     * @param args Args.
+     */
     public static void main(String[] args) {
         launch(args);
     }

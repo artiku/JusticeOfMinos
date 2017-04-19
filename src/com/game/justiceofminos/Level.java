@@ -1,11 +1,14 @@
 package com.game.justiceofminos;
 
 /**
- * Level data
+ * Level data.
  */
 public class Level {
 
-    final static String[] REGULAR_LEVEL_DATA = new String[] {
+    /**
+     * Regular level data.
+     */
+    static final String[] REGULAR_LEVEL_DATA = new String[] {
             "##############################",
             "#     #     #   #        #   #",
             "# ###   ###   #  ##   ##    ##",
