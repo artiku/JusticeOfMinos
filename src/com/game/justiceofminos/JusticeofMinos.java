@@ -21,12 +21,12 @@ public class JusticeofMinos extends Application {
     /**
      * Standard screen width.
      */
-    private static final int SCREEN_WIDTH = 1280;
+    private static final int SCREEN_WIDTH = 1024;
 
     /**
      * Standard screen height.
      */
-    private static final int SCREEN_HEIGHT = 960;
+    private static final int SCREEN_HEIGHT = 600;
 
     /**
      * Standard size of every block(sprite) exist in the game.
@@ -47,6 +47,10 @@ public class JusticeofMinos extends Application {
      * Spawn cell Y coordinate for the Hero Character.
      */
     private static final int HERO_SPAWN_Y = 5 * BLOCK_SIZE;
+
+    private int heroSpawnX;
+
+    private int heroSpawnY;
 
     /**
      * Keep values of every key pressed.
@@ -237,14 +241,20 @@ public class JusticeofMinos extends Application {
                     case 'E':
                         Block gateBlock = new Block(Block.BlockType.GATE, x * BLOCK_SIZE, y * BLOCK_SIZE);
                         break;
+                    case '@':
+                        Block floorSpawnBlock = new Block(Block.BlockType.FLOOR, x * BLOCK_SIZE, y * BLOCK_SIZE);
+                        heroSpawnX = x * BLOCK_SIZE;
+                        heroSpawnY = y * BLOCK_SIZE;
+                        break;
                 }
 
             }
         }
 
         player = new Character();
-        player.setTranslateX(SCREEN_WIDTH / 2);
-        player.setTranslateY(SCREEN_HEIGHT / 2);
+        player.setTranslateX(heroSpawnX);
+        player.setTranslateY(heroSpawnY);
+//        root.setLayoutX(player.getTranslateX() + SCREEN_WIDTH / 2);
         player.translateXProperty().addListener((ons, old, newValue) -> {
             int offset = newValue.intValue();
 

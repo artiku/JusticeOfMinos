@@ -40,8 +40,10 @@ public class Block extends Pane{
      */
     public Block(BlockType blockType, int x, int y) {
         block = new ImageView(blocksImage);
-        block.setFitWidth(JusticeofMinos.BLOCK_SIZE);
-        block.setFitHeight(JusticeofMinos.BLOCK_SIZE);
+//        block.setFitWidth(JusticeofMinos.BLOCK_SIZE);
+//        block.setFitHeight(JusticeofMinos.BLOCK_SIZE);
+        block.setScaleX(JusticeofMinos.BLOCK_SIZE / 32);
+        block.setScaleY(JusticeofMinos.BLOCK_SIZE /32);
         setTranslateX(x);
         setTranslateY(y);
 
