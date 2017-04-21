@@ -3,13 +3,19 @@ package com.game.justiceofminos;
 
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
+import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 
@@ -21,12 +27,12 @@ public class JusticeofMinos extends Application {
     /**
      * Standard screen width.
      */
-    private static final int SCREEN_WIDTH = 1024;
+    static final int SCREEN_WIDTH = 1024;
 
     /**
      * Standard screen height.
      */
-    private static final int SCREEN_HEIGHT = 600;
+    static final int SCREEN_HEIGHT = 600;
 
     /**
      * Standard size of every block(sprite) exist in the game.
@@ -41,15 +47,11 @@ public class JusticeofMinos extends Application {
     /**
      * Spawn cell X coordinate for the Hero Character.
      */
-    private static final int HERO_SPAWN_X = 11 * BLOCK_SIZE;
+    private int heroSpawnX;
 
     /**
      * Spawn cell Y coordinate for the Hero Character.
      */
-    private static final int HERO_SPAWN_Y = 5 * BLOCK_SIZE;
-
-    private int heroSpawnX;
-
     private int heroSpawnY;
 
     /**
@@ -68,6 +70,16 @@ public class JusticeofMinos extends Application {
     static ArrayList<Block> wallStreet = new ArrayList<>();
 
     /**
+     * Chests.
+     */
+    static ArrayList<Block> chestArray = new ArrayList<>();
+
+    /**
+     * Gate block.
+     */
+    private Block gates;
+
+    /**
      * Player movement speed.
      */
     private int playerMovementSpeed = MOVEMENT_SPEED;
@@ -75,7 +87,7 @@ public class JusticeofMinos extends Application {
     /**
      * Primary Application Pane.
      */
-    private static Pane appRoot = new Pane();
+    static Pane appRoot = new Pane();
 
     /**
      * Primary scene.
@@ -86,16 +98,16 @@ public class JusticeofMinos extends Application {
      * Primary root Node.
      */
     static Pane root = new Pane();
-//
-//    /**
-//     * Map array.
-//     */
-//    static ArrayList<ArrayList<Block>> mapArray = new ArrayList<>();
 
     /**
      * Instance of one and only Hero Character.
      */
     private Character player;
+
+    /**
+     * Chest to be collected to get the key.
+     */
+    private int toBeCollected = 0;
 
     /**
      * Level width.
@@ -107,6 +119,10 @@ public class JusticeofMinos extends Application {
      */
     private int levelHeight;
 
+    /**
+     * If key was found by the player.
+     */
+    private boolean keyFound = false;
 
 
 
@@ -124,13 +140,13 @@ public class JusticeofMinos extends Application {
 
         /* Setting Scene */
         scene = new Scene(appRoot, SCREEN_WIDTH, SCREEN_HEIGHT, Color.BLACK);
+        scene.getStylesheets().add(getClass().getResource("fontstyle.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle("Justice Of Minos");
         primaryStage.show();
 
         /* Setting up controls. Only after setting the Scene. */
         initializeKeyInput();
-
         /* Main thread */
 //        AnimationTimer everyFrameUpdate =
         new AnimationTimer() {
@@ -138,8 +154,83 @@ public class JusticeofMinos extends Application {
             @Override
             public void handle(long now) {
                 update();
+                collectionCheck();
+                exitCheck();
+//                damageCheck();
             }
         }.start();
+//        initSpears();
+    }
+
+    /**
+     * Check collision with the Exit Gates and check if player has key.
+     */
+    private void exitCheck() {
+        final int offsetToCenter = Character.HERO_SIZE / 4;
+
+        Rectangle2D playerPos = new Rectangle2D(player.getTranslateX() + offsetToCenter,
+                player.getTranslateY() + offsetToCenter * 2,
+                offsetToCenter * 2 + 2, offsetToCenter * 2);
+        if (playerPos.intersects(gates.getTranslateX(), gates.getTranslateY(),
+                JusticeofMinos.BLOCK_SIZE, JusticeofMinos.BLOCK_SIZE * 2)) {
+            if (keyFound) {
+//                gameFinish();
+             } else {
+                LabelControl.exitLabel();
+            }
+        }
+
+
+    }
+
+    /**
+     * Collects chests.
+     */
+    private void collectionCheck() {
+        final int offsetToCenter = Character.HERO_SIZE / 4;
+
+        Rectangle2D playerPos = new Rectangle2D(player.getTranslateX() + offsetToCenter,
+                player.getTranslateY() + offsetToCenter * 2,
+                offsetToCenter * 2 + 2, offsetToCenter * 2);
+        for (Block chest : chestArray) {
+            if (playerPos.intersects(chest.getTranslateX(), chest.getTranslateY(),
+                    JusticeofMinos.BLOCK_SIZE, JusticeofMinos.BLOCK_SIZE)) {
+                if (!chest.collected) {
+                    chest.block.setViewport(new Rectangle2D(0, Block.FILE_SIZE * (2 + 1),
+                            Block.FILE_SIZE - 1, Block.FILE_SIZE - 1));
+                    chest.collected = true;
+                    toBeCollected--;
+                    if (toBeCollected == 0) {
+                        showKeyLabel();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * If every chest was opened give player the key and notify about that.
+     */
+    private void showKeyLabel() {
+        final int labelOffset = 12;
+
+        Label keyLabel = new Label("You've found the key!\nFind the exit now!");
+        keyLabel.setWrapText(true);
+        keyLabel.setTranslateX(SCREEN_WIDTH / labelOffset);
+        keyLabel.setTranslateY(SCREEN_HEIGHT / (labelOffset / 2) * (labelOffset / 2 - 1));
+        appRoot.getChildren().add(keyLabel);
+
+        final int viewOffsetX = 50;
+        final int viewOffsetY = 70;
+
+        ImageView key = new ImageView(new Image(Assets.KEY));
+        key.setScaleX(2);
+        key.setScaleY(2);
+        key.setX(SCREEN_WIDTH - viewOffsetX);
+        key.setY(viewOffsetY);
+        appRoot.getChildren().add(key);
+
+        keyFound = true;
     }
 
     /**
@@ -190,7 +281,6 @@ public class JusticeofMinos extends Application {
 //        currentAnim.pause();
         if (keyInput.contains(KeyCode.RIGHT)) {
             player.moveX(playerMovementSpeed);
-            //TODO or do this:
             player.animation.right.play();
 
 //            currentAnim = moveRight;
@@ -229,220 +319,86 @@ public class JusticeofMinos extends Application {
                 switch (line.charAt(x)) {
                     case '#':
                         Block wallBlock = new Block(Block.BlockType.WALL, x * BLOCK_SIZE, y * BLOCK_SIZE);
-                        // TODO Could be done in class(better) or here
-//                        wallStreet.add(wallBlock);
+                        break;
+                    case 'T':
+                        Block tWallBlock = new Block(Block.BlockType.T_WALL, x * BLOCK_SIZE, y * BLOCK_SIZE);
+                        break;
+                    case 'H':
+                        Block horizontalWallBlock = new Block(Block.BlockType.CORRIDOR_WALL_HORIZONTAL,
+                                x * BLOCK_SIZE, y * BLOCK_SIZE);
+                        break;
+                    case 'V':
+                        Block verticcalWallBlock = new Block(Block.BlockType.CORRIDOR_WALL_VERTICAL,
+                                x * BLOCK_SIZE, y * BLOCK_SIZE);
                         break;
                     case ' ':
                         Block floorBlock = new Block(Block.BlockType.FLOOR, x * BLOCK_SIZE, y * BLOCK_SIZE);
                         break;
                     case 'C':
                         Block chestBlock = new Block(Block.BlockType.CHEST, x * BLOCK_SIZE, y * BLOCK_SIZE);
+                        toBeCollected++;
                         break;
-                    case 'E':
+                    case 'G':
                         Block gateBlock = new Block(Block.BlockType.GATE, x * BLOCK_SIZE, y * BLOCK_SIZE);
+                        gates = gateBlock;
                         break;
                     case '@':
                         Block floorSpawnBlock = new Block(Block.BlockType.FLOOR, x * BLOCK_SIZE, y * BLOCK_SIZE);
                         heroSpawnX = x * BLOCK_SIZE;
                         heroSpawnY = y * BLOCK_SIZE;
                         break;
+                    default:
+                        break;
                 }
 
             }
         }
 
+
+        spawnHero();
+
+        root.getChildren().add(player);
+        appRoot.getChildren().add(root);
+
+        GradientAlphaMask gradient = new GradientAlphaMask();
+        appRoot.getChildren().add(gradient);
+
+    }
+
+    /**
+     * Spawn hero character.
+     */
+    private void spawnHero() {
         player = new Character();
-        player.setTranslateX(heroSpawnX);
-        player.setTranslateY(heroSpawnY);
-//        root.setLayoutX(player.getTranslateX() + SCREEN_WIDTH / 2);
+        final int maxOffset = 200;
+
         player.translateXProperty().addListener((ons, old, newValue) -> {
             int offset = newValue.intValue();
 
-            if (offset > 200 && offset < levelWidth - 200) {
-                root.setLayoutX(-(offset - SCREEN_WIDTH / 2));
-                // Here we can move background as well: background.<<same>>
+            if (offset > maxOffset && offset < levelWidth - maxOffset) {
+                root.setLayoutX(-(offset - SCREEN_WIDTH / 2) - Character.HERO_SIZE / 2);
             }
         });
         player.translateYProperty().addListener((ons, old, newValue) -> {
             int offset = newValue.intValue();
 
-            if (offset > 200 && offset < levelHeight - 200) {
-                root.setLayoutY(-(offset - SCREEN_HEIGHT / 2));
-                // Here we can move background as well: background.<<same>>
+            if (offset > maxOffset && offset < levelHeight - maxOffset) {
+                root.setLayoutY(-(offset - SCREEN_HEIGHT / 2) - Character.HERO_SIZE / 2);
             }
         });
-        root.getChildren().add(player);
-        appRoot.getChildren().add(root);
 
-        // TODO UnderStaNd!
-        /* ?????????????????????? */
-//        for (int y = 0; y <= map2.length; y++) {
-//            ArrayList<Block> xWorldStrip = new ArrayList<>();
-//            for (int x = 0; x <= map2[y].length(); x++) {
-//                if (map2[y].charAt(x) == '#') {
-//                    xWorldStrip.add(Block.WALL);
-//                }
-//            }
-//            mapArray.add(xWorldStrip);
-//        }
 
-//        int x = 0;
-//        int y = 0;
-//
-//        for (char c : map.toCharArray()) {
-//            if (c == '#') {
-//                Wall wall = new Wall(x * SPRITESIZE, y * SPRITESIZE);
-//                spriteWorldMapCoordsHashMap.put( (int) wall.getWorldMapPositionX() + ":" + y * SPRITESIZE, wall);
-//                wallList.add(wall);
-//                wall.addToGroup(boardGroup);
-//            } else if (c == ' ') {
-//                Sprite floor = new Floor(x * SPRITESIZE, y * SPRITESIZE);
-//                spriteWorldMapCoordsHashMap.put( (int) floor.getWorldMapPositionX() + ":" +
-// (int) floor.getWorldMapPositionY(), floor);
-//                floor.addToGroup(boardGroup);
-//            } else if (c == '\n') {
-//                y++;
-//                x = -1;
-//            }
-//            x++;
-//        }
+        player.setTranslateX(heroSpawnX);
+        player.setTranslateY(heroSpawnY);
+
+//        double offsetPrimalX = player.getTranslateX();
+        double offsetPrimalY = player.getTranslateY();
+
+        System.out.println(player.getTranslateY());
+        if (offsetPrimalY < maxOffset) {
+            root.setLayoutY((SCREEN_HEIGHT / 2 - maxOffset) - Character.HERO_SIZE / 2);
+        }
     }
-
-//    /**
-//     * Render Camera View (Only the area, that is seen at the moment).
-//     * Camera is player focused. (Player is always in the center.)
-//     * @param boardGroup Group(Pane) where render to (Camera View)
-//     */
-//    public void renderCameraView(Group boardGroup) {
-//        /* Coordinates on the World Map where the left upper corner of the Camera View is at the moment. */
-//        int startDrawPosOnCameraViewX = (int) hero.getWorldMapPositionX() - cameraCenterX;
-//        int startDrawPosOnCameraViewY = (int) hero.getWorldMapPositionY() - cameraCenterY;
-//
-//        /* Rendering Hero */
-//        hero.renderAt(cameraCenterX, cameraCenterY);
-//        //TODO Collision box. Rendering it for fun and collision check TEST.
-//        hero.renderBox(cameraCenterX, cameraCenterY);
-//
-//        /* Getting closest exact coordinates of the sprite on the World Map from start drawing position
-//        (left upper corner of the Camera View) relatively to World Map. */
-//        int startSpriteToDrawX = startDrawPosOnCameraViewX / SPRITESIZE;
-//        int startSpriteToDrawY = startDrawPosOnCameraViewY / SPRITESIZE;
-//        startSpriteToDrawX *= SPRITESIZE;
-//        startSpriteToDrawY *= SPRITESIZE;
-//
-//        /* Block to draw in line. */
-//        int x = 0;
-//        /* Block to draw in column. */
-//        int y = 0;
-//
-//        // Map draw only (By integer coordinates)
-//        for (int spriteToDrawY = startSpriteToDrawY; spriteToDrawY <= SCREEN_HEIGHT +
-// startDrawPosOnCameraViewY; spriteToDrawY += SPRITESIZE) {
-//
-//            for (int spriteToDrawX = startSpriteToDrawX; spriteToDrawX <= SCREEN_WIDTH +
-// startDrawPosOnCameraViewX; spriteToDrawX += SPRITESIZE) {
-//
-//                // TODO Is there any other way to keep coordinates together? Anything
-// faster than string? Like tuple at Python.
-//                Sprite sprite = spriteWorldMapCoordsHashMap.get( spriteToDrawX + ":" + spriteToDrawY);
-//                if (sprite != null) {
-//                    int cameraDrawX = SPRITESIZE * x - startDrawPosOnCameraViewX % SPRITESIZE;
-//                    int cameraDrawY = SPRITESIZE * y - startDrawPosOnCameraViewY % SPRITESIZE;
-//                    sprite.renderAt(cameraDrawX, cameraDrawY);
-//                }
-//                x++;
-//            }
-//            y++;
-//            x = 0;
-//        }
-//
-//    }
-
-
-
-//    /**
-//     * Spawn Hero Character.
-//     * @param boardGroup Group of the Game World.
-//     */
-//    private void spawnHeroCharacter(Group boardGroup) {
-//        hero = new Char(heroSpawnX, heroSpawnY);
-//        hero.addToGroup(boardGroup);
-//    }
-//
-//    /**
-//     * Check for the collision between Hero and World Map.
-//     * @param nextPosX Predictable X pos of the hero.
-//     * @param nextPosY Predictable Y pos of the hero.
-//     * @return false if collides and movement is not allowed
-//     */
-//    private boolean checkCollision(int nextPosX, int nextPosY) {
-//        for (Wall wall : wallList) {
-//            int xColBox = nextPosX + hero.getCollisionBoxX();
-//            int yColBox = nextPosY + hero.getCollisionBoxY();
-//            int widthColBox =  hero.getCollisionBoxWidth();
-//            int heightColBox =  hero.getCollisionBoxHeight();
-//                    /* We create predictable Collision Box and if it collide, next position wont be updated. */
-//            if (new Rectangle(xColBox, yColBox, widthColBox, heightColBox)
-// .intersects(wall.getColBox().getBoundsInLocal())) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-
-//    /**
-//     * Input processing. Movement. Render.
-//     * @param boardGroup Group(Main Pane)
-//     */
-//    private void gameProcessesTimeline(Group boardGroup) {
-//        /* Initializing timeline for the game processes */
-//        final Timeline timeline = new Timeline();
-//        timeline.setCycleCount(Timeline.INDEFINITE);
-//
-//        /* Rounding for the update delay value */
-//        BigDecimal updateDelay = new BigDecimal(1);
-//        updateDelay = updateDelay.divide(BigDecimal.valueOf(FPS), 4, BigDecimal.ROUND_HALF_UP);  // 0.0167
-//
-//        /* KeyFrame creation */
-//        KeyFrame kf = new KeyFrame(
-//                Duration.seconds(updateDelay.doubleValue()),        // 0.017 - speed for 60 FPS
-//                event -> {                    // new EventHandler<ActionEvent>()
-//
-//                    double nextPosX = hero.getWorldMapPositionX();
-//                    double nextPosY = hero.getWorldMapPositionY();
-//
-//                    // TODO Wrap into dedicated method or even class(Controls / jom.game.Controller)
-//                    if (input.contains("LEFT"))
-//                        nextPosX -= HEROSPEED;
-//                    if (input.contains("RIGHT"))
-//                        nextPosX += HEROSPEED;
-//                    if (input.contains("UP"))
-//                        nextPosY -= HEROSPEED;
-//                    if (input.contains("DOWN"))
-//                        nextPosY += HEROSPEED;
-//
-//                    if (input.contains("LEFT") && input.contains("SHIFT"))
-//                        nextPosX -= HEROSPEED * 1.15;
-//                    if (input.contains("RIGHT") && input.contains("SHIFT"))
-//                        nextPosX += HEROSPEED * 1.15;
-//                    if (input.contains("UP") && input.contains("SHIFT"))
-//                        nextPosY -= HEROSPEED * 1.15;
-//                    if (input.contains("DOWN") && input.contains("SHIFT"))
-//                        nextPosY += HEROSPEED * 1.15;
-//
-//                    /* Rendering Camera View (All the details that player should see) */
-//                    renderCameraView(boardGroup);
-//
-//                    if (checkCollision((int) nextPosX, (int) nextPosY)) {
-//                        hero.updatePos(nextPosX, nextPosY);
-//                    }
-//
-//                }
-//        );
-//
-//        timeline.getKeyFrames().add(kf);
-//        timeline.play();
-//    }
 
     /**
      * Main.

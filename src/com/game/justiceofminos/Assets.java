@@ -1,21 +1,34 @@
 package com.game.justiceofminos;
 
-import javafx.geometry.Rectangle2D;
-
 /**
- * Created by Anna on 19.04.2017.
+ * (Default) Created by Anna on 19.04.2017.
  */
 public class Assets {
 
     /**
      * Blocks sprite sheet.
      */
-    static final String WORLD_SPRITES = "file:assets/WorldSprites.png";
+    static final String WORLD_SPRITES = "file:assets/WorldSprites1.png";
 
     /**
      * Hero(player) sprites.
      */
     static final String HERO_SPRITE = "file:assets/Knight.png";
+
+    /**
+     * Gradient Image.
+     */
+    static final String GRADIENT = "file:assets/GradientAlphaMask.png";
+
+    /**
+     * Heart image path.
+     */
+    static final String HEART = "file:assets/Heart.png";
+
+    /**
+     * Key image path.
+     */
+    static final String KEY = "file:assets/Key.png";
 
 //    /**
 //     * Wall image path.

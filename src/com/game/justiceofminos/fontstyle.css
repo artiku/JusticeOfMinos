@@ -1,0 +1,8 @@
+.label {
+    -fx-font-family: 'Monospaced';
+    -fx-font-size: 25;
+}
+
+.button .text {
+    -fx-font-family: '04B_30__';
+}
