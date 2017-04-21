@@ -131,7 +131,7 @@ class Block extends Pane {
                 block.setViewport(new Rectangle2D(FILE_SIZE * 2,
                         0, FILE_SIZE, FILE_SIZE - 1));
             }),
-            new KeyFrame(Duration.millis(1500)));
+            new KeyFrame(Duration.millis(2000)));
             pauseTimeline.play();
         });
         trapAnim.setCycleCount(Animation.INDEFINITE);

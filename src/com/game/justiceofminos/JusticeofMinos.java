@@ -527,6 +527,7 @@ public class JusticeofMinos extends Application {
             }
         }
 
+            toBeCollected = 2;
 
         spawnHero();
 
