@@ -3,20 +3,26 @@ package com.game.justiceofminos;
 
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
-import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -75,6 +81,11 @@ public class JusticeofMinos extends Application {
     static ArrayList<Block> chestArray = new ArrayList<>();
 
     /**
+     * Traps.
+     */
+    static ArrayList<Block> itIsATrvp = new ArrayList<>();
+
+    /**
      * Gate block.
      */
     private Block gates;
@@ -98,6 +109,16 @@ public class JusticeofMinos extends Application {
      * Primary root Node.
      */
     static Pane root = new Pane();
+
+    /**
+     * Primary stage.
+     */
+    Stage primaryStage;
+
+    /**
+     * Main thread.
+     */
+    private AnimationTimer everyFrameUpdate;
 
     /**
      * Instance of one and only Hero Character.
@@ -124,7 +145,28 @@ public class JusticeofMinos extends Application {
      */
     private boolean keyFound = false;
 
+    /**
+     * Label Control.
+     */
+    private LabelControl timer;
 
+    /**
+     * Start Button
+     */
+    @FXML
+    private Button newGameButton;
+
+    /**
+     * Init fxml file functionality.
+     */
+    @FXML
+    public void initialize() {
+        newGameButton.setOnAction(event -> {
+            System.out.println("HELLO");
+            startButtonClicked();
+        });
+
+    }
 
     /**
      * Start of the JavaFx Application.
@@ -133,12 +175,54 @@ public class JusticeofMinos extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        initGameWorld();
-//
-//        /* Setting Main Group(Pane) */
-//        Group boardGroup = new Group();
+        this.primaryStage = primaryStage;
+        final int fontSize = 48;
+        final int offX = 543;
+        final int offY = 393;
 
-        /* Setting Scene */
+        Button but = new Button("New Game");
+        AnchorPane pane = new AnchorPane();
+        pane.setStyle("-fx-background-color: black;");
+        pane.getChildren().add(but);
+
+
+        but.setFont(new Font("Monospace", fontSize));
+        but.setStyle("-fx-background-color: grey;");
+        but.setTextFill(Color.GHOSTWHITE);
+        but.setTranslateX(offX);
+        but.setTranslateY(offY);
+        but.setOnAction(event -> {
+            System.out.println("HELLO2");
+            startButtonClicked();
+        });
+
+        Scene newScene = new Scene(pane, SCREEN_WIDTH, SCREEN_HEIGHT);
+        this.primaryStage.setScene(newScene);
+        this.primaryStage.show();
+
+//        try {
+//            // Load root layout from fxml file.
+//            FXMLLoader loader = new FXMLLoader();
+//            loader.setLocation(com.game.justiceofminos.JusticeofMinos.class.getResource("MainMenu.fxml"));
+//            Pane mainMenu = loader.load();
+//
+//            Scene mainScene = new Scene(mainMenu, SCREEN_WIDTH, SCREEN_HEIGHT);
+//            this.primaryStage.setScene(mainScene);
+//
+//            this.primaryStage.show();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    /**
+     * Game to start.
+     */
+    private void startButtonClicked() {
+        /* Initializing game content */
+        initGameWorld();
+
+        /* Setting Scene with main root(appRoot) */
         scene = new Scene(appRoot, SCREEN_WIDTH, SCREEN_HEIGHT, Color.BLACK);
         scene.getStylesheets().add(getClass().getResource("fontstyle.css").toExternalForm());
         primaryStage.setScene(scene);
@@ -147,19 +231,99 @@ public class JusticeofMinos extends Application {
 
         /* Setting up controls. Only after setting the Scene. */
         initializeKeyInput();
-        /* Main thread */
-//        AnimationTimer everyFrameUpdate =
-        new AnimationTimer() {
 
-            @Override
-            public void handle(long now) {
-                update();
-                collectionCheck();
-                exitCheck();
-//                damageCheck();
+        timer = new LabelControl();
+        player.setHealthView();
+        appRoot.getChildren().add(player.healthGroup);
+        /* Main thread */
+        everyFrameUpdate =
+                new AnimationTimer() {
+
+                    @Override
+                    public void handle(long now) {
+                        update();
+                        timer.updateTime();
+                        collectionCheck();
+                        exitCheck();
+                        damageCheck();
+                        checkLives();
+                    }
+                };
+        everyFrameUpdate.start();
+    }
+
+    /**
+     * Check if player is dead.
+     */
+    private void checkLives() {
+        if (player.playerHealth <= 0) {
+            playDeath();
+        }
+    }
+
+
+    /**
+     * Death Scene.
+     */
+    void playDeath() {
+        final int fontSize = 140;
+        final int fontSize1 = 60;
+        final int offsetY = SCREEN_HEIGHT / 3;
+
+        BorderPane deathPane = new BorderPane();
+        deathPane.setStyle("-fx-background-color: black;");
+        Label deathLabel = new Label("YOU ARE DEAD!");
+        deathPane.setAlignment(deathLabel, Pos.CENTER);
+        deathPane.setTop(deathLabel);
+        deathLabel.setTranslateY(offsetY);
+        deathLabel.setTextFill(Color.GHOSTWHITE);
+        deathLabel.setFont(new Font("Monospace", fontSize));
+        Button restartButton = new Button("Main menu");
+        restartButton.setOnMouseEntered(event -> {
+            try {
+                clearEverythingUp();
+                start(primaryStage);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }.start();
-//        initSpears();
+        });
+        restartButton.setStyle("-fx-background-color: grey;");
+        restartButton.setFont(new Font("Monospace", fontSize1));
+
+
+        deathPane.setAlignment(restartButton, Pos.CENTER);
+        deathPane.setBottom(restartButton);
+        Scene deathScene = new Scene(deathPane, SCREEN_WIDTH, SCREEN_HEIGHT, Color.BLACK);
+        primaryStage.setScene(deathScene);
+    }
+
+    /**
+     * Clear everything up.
+     */
+    private void clearEverythingUp() {
+        appRoot = new Pane();
+        root = new Pane();
+        everyFrameUpdate.stop();
+    }
+
+    /**
+     * Trap intersection check.
+     */
+    private void damageCheck() {
+        final int offsetToCenter = Character.HERO_SIZE / 4;
+        final int trapOffset = BLOCK_SIZE / 5;
+
+        Rectangle2D playerPos = new Rectangle2D(player.getTranslateX() + offsetToCenter,
+                player.getTranslateY() + offsetToCenter * 2,
+                offsetToCenter * 2 + 2, offsetToCenter * 2);
+        for (Block trap : itIsATrvp) {
+            if (playerPos.intersects(trap.getTranslateX() + trapOffset, trap.getTranslateY() + trapOffset,
+                    BLOCK_SIZE - trapOffset * 2, BLOCK_SIZE - trapOffset * 2)) {
+                if (trap.active) {
+                    player.animation.damageAcquired.play();
+                }
+            }
+        }
     }
 
     /**
@@ -174,12 +338,21 @@ public class JusticeofMinos extends Application {
         if (playerPos.intersects(gates.getTranslateX(), gates.getTranslateY(),
                 JusticeofMinos.BLOCK_SIZE, JusticeofMinos.BLOCK_SIZE * 2)) {
             if (keyFound) {
-//                gameFinish();
+                gameFinish();
              } else {
                 LabelControl.exitLabel();
             }
         }
 
+
+    }
+
+    /**
+     *
+     */
+    private void gameFinish() {
+        primaryStage.setScene(timer.gameEnd());
+        clearEverythingUp();
 
     }
 
@@ -347,6 +520,8 @@ public class JusticeofMinos extends Application {
                         heroSpawnX = x * BLOCK_SIZE;
                         heroSpawnY = y * BLOCK_SIZE;
                         break;
+                    case 'X':
+                        Block syncTrap = new Block(Block.BlockType.TRAP_SYNC, x * BLOCK_SIZE, y * BLOCK_SIZE);
                     default:
                         break;
                 }
@@ -394,7 +569,6 @@ public class JusticeofMinos extends Application {
 //        double offsetPrimalX = player.getTranslateX();
         double offsetPrimalY = player.getTranslateY();
 
-        System.out.println(player.getTranslateY());
         if (offsetPrimalY < maxOffset) {
             root.setLayoutY((SCREEN_HEIGHT / 2 - maxOffset) - Character.HERO_SIZE / 2);
         }

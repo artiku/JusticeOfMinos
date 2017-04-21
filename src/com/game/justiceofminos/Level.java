@@ -12,7 +12,7 @@ public class Level {
             "THHHHHHHHHTHHHHHTHHHHHHHHTHHHHHHHTHHHTHHHHHHHHHTHHTGHHHHHT",
             "V         VC    #        V       V   V         #  V  @   #",
             "V THT     #HHT    #   T  V #HT# ## # # #HTHHH#    THTH#  #",
-            "V V #HTH#    V T   THH#HH#   V     V     V  CTHH#   V    #",
+            "V V #HTH#    V T   THH#HH#   V     V     V  CTHH#   V   X#",
             "V #   V   #HHTH#H# V       TH# #HTHTHTH# V T V    T V    #",
             "V   #HT T    V     # ## T  V     VCV V   # V V  #HT V    #",
             "V     V V    #          V #T# THH# V VC    V V    V V    #",
