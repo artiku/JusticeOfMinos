@@ -70,7 +70,7 @@ class Character extends Pane {
     /**
      * Player health.
      */
-    int playerHealth = 3;
+    int playerHealth = 2 + 1;
 
     /**
      * Hero sprite animation.
