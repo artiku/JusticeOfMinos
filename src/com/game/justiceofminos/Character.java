@@ -1,6 +1,7 @@
 package com.game.justiceofminos;
 
 import javafx.animation.KeyFrame;
+import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -100,10 +101,18 @@ class Character extends Pane {
         animation.damageAcquired.setCycleCount(damageAnimCount);
         animation.damageAcquired.setOnFinished(event -> {
             heroView.setVisible(true);
-            playerHealth--;
-            setHealthView();
+//            playerHealth--;
+//            setHealthView();
         });
         getChildren().add(this.heroView);
+    }
+
+    /**
+     * Applying damage.
+     */
+    void applyDamage() {
+        playerHealth--;
+        setHealthView();
     }
 
     /**
@@ -203,15 +212,24 @@ class Character extends Pane {
                 Character.this.width, Character.this.height);
 
         /**
-         * Played when player is damaged..
+         * Set player visible for blinking.
          */
-        final Timeline damageAcquired = new Timeline(
-                new KeyFrame(Duration.millis(300), e -> {
-                    heroView.setVisible(true);
-                }),
-                new KeyFrame(Duration.millis(700), e -> {
+        final Timeline t2 = new Timeline(new KeyFrame(Duration.millis(300), e -> {
+            heroView.setVisible(true);
+        }));
+
+        /**
+         * Set player invisible for blinking.
+         */
+        final Timeline t1 = new Timeline(
+                new KeyFrame(Duration.millis(400), e -> {
                     heroView.setVisible(false);
                 }));
+
+        /**
+         * Played when player is damaged.
+         */
+        final SequentialTransition damageAcquired = new SequentialTransition(t1, t2);
 
     }
 

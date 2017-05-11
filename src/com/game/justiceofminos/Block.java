@@ -2,6 +2,7 @@ package com.game.justiceofminos;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
+import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -13,6 +14,16 @@ import javafx.util.Duration;
  * Desc.
  */
 class Block extends Pane {
+
+    /**
+     * Trap active state duration in millis.
+     */
+    private static final int TRAP_ACTIVE_DURATION = 800;
+
+    /**
+     * Trap inactive state duration in millis.
+     */
+    private static final int TRAP_INACTIVE_DURATION = 1300;
 
     /**
      * Blocks spritesheet.
@@ -116,26 +127,44 @@ class Block extends Pane {
      * Animation for the trap.
      */
     private void assignTrapAnimation() {
-        final SpriteAnimation activeAnim
+
+        final SpriteAnimation trapActiveAnim
                 = new SpriteAnimation(block, Duration.millis(750), 2, 2,
                 0, FILE_SIZE,
                 FILE_SIZE, FILE_SIZE - 1);
 
-        final Timeline trapAnim = new Timeline(new KeyFrame(Duration.millis(1500), event -> {
-            activeAnim.play();
+        // ANY DURATION CONSTANT HERE?
+        final Timeline trapActive = new Timeline(new KeyFrame(Duration.millis(TRAP_ACTIVE_DURATION), event -> {
+            trapActiveAnim.playFromStart();
             active = true;
         }));
-        activeAnim.setOnFinished(event -> {
-            final Timeline pauseTimeline = new Timeline(new KeyFrame(Duration.ZERO, event1 -> {
-                active = false;
-                block.setViewport(new Rectangle2D(FILE_SIZE * 2,
-                        0, FILE_SIZE, FILE_SIZE - 1));
-            }),
-            new KeyFrame(Duration.millis(2000)));
-            pauseTimeline.play();
-        });
-        trapAnim.setCycleCount(Animation.INDEFINITE);
-        trapAnim.play();
+
+        final Timeline trapInactive = new Timeline(new KeyFrame(Duration.millis(TRAP_INACTIVE_DURATION), event -> {
+            trapActiveAnim.stop();
+            active = false;
+            block.setViewport(new Rectangle2D(FILE_SIZE * 2,
+                    0, FILE_SIZE, FILE_SIZE - 1));
+        }));
+
+        final SequentialTransition trapCycle = new SequentialTransition(trapActive, trapInactive);
+        trapCycle.setCycleCount(Animation.INDEFINITE);
+        trapCycle.play();
+
+//        final Timeline trapAnim = new Timeline(new KeyFrame(Duration.millis(1500), event -> {
+//            trapActiveAnim.play();
+//            active = true;
+//        }));
+//        trapActiveAnim.setOnFinished(event -> {
+//            final Timeline pauseTimeline = new Timeline(new KeyFrame(Duration.ZERO, event1 -> {
+//                active = false;
+//                block.setViewport(new Rectangle2D(FILE_SIZE * 2,
+//                        0, FILE_SIZE, FILE_SIZE - 1));
+//            }),
+//            new KeyFrame(Duration.millis(2000)));
+//            pauseTimeline.play();
+//        });
+//        trapAnim.setCycleCount(Animation.INDEFINITE);
+//        trapAnim.play();
 
     }
 }

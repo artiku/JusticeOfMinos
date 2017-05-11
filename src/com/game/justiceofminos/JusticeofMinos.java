@@ -111,7 +111,7 @@ public class JusticeofMinos extends Application {
     /**
      * Primary stage.
      */
-    Stage primaryStage;
+    private Stage primaryStage;
 
     /**
      * Main thread.
@@ -160,7 +160,7 @@ public class JusticeofMinos extends Application {
     @FXML
     public void initialize() {
         newGameButton.setOnAction(event -> {
-            System.out.println("HELLO");
+            System.out.println("FXML Initialized");
             startButtonClicked();
         });
 
@@ -190,7 +190,7 @@ public class JusticeofMinos extends Application {
         but.setTranslateX(offX);
         but.setTranslateY(offY);
         but.setOnAction(event -> {
-            System.out.println("HELLO2");
+            System.out.println("New Game Started...");
             startButtonClicked();
         });
 
@@ -263,7 +263,7 @@ public class JusticeofMinos extends Application {
     /**
      * Death Scene.
      */
-    void playDeath() {
+    private void playDeath() {
         final int fontSize = 140;
         final int fontSize1 = 60;
         final int offsetY = SCREEN_HEIGHT / 3;
@@ -301,7 +301,19 @@ public class JusticeofMinos extends Application {
     private void clearEverythingUp() {
         appRoot = new Pane();
         root = new Pane();
+
+        // Threads
         everyFrameUpdate.stop();
+        currentAnim.stop();
+
+        // Private Variables
+        keyFound = false;
+        toBeCollected = 0;
+
+        // Arrays
+        itIsATrvp.clear();
+        chestArray.clear();
+        wallStreet.clear();
     }
 
     /**
@@ -318,6 +330,9 @@ public class JusticeofMinos extends Application {
             if (playerPos.intersects(trap.getTranslateX() + trapOffset, trap.getTranslateY() + trapOffset,
                     BLOCK_SIZE - trapOffset * 2, BLOCK_SIZE - trapOffset * 2)) {
                 if (trap.active) {
+                    if (!(player.animation.damageAcquired.getStatus() == Animation.Status.RUNNING)) {
+                        player.applyDamage();
+                    }
                     player.animation.damageAcquired.play();
                 }
             }
@@ -527,7 +542,9 @@ public class JusticeofMinos extends Application {
             }
         }
 
-            toBeCollected = 2;
+
+        toBeCollected = toBeCollected - 5;
+        System.out.println("Chests to be collected: " + toBeCollected);
 
         spawnHero();
 
